@@ -50,7 +50,7 @@ pattern.initialize()
 
 #フォルダ名
 now = datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')
-dir = f"{pattern.graphTitle}/{now}"
+dir = f"{pattern.path}/{now}"
 os.makedirs(dir, exist_ok=True)
 
 #条件をテキストファイルに出力
@@ -62,7 +62,7 @@ with open(dir+"/status.txt", mode="w") as f:
 ginis = []
 ims = []
 
-fig = plt.figure()
+# fig = plt.figure()
 
 # 各譲渡回数でグラフ描画
 for i, time in enumerate(pattern.times):
@@ -72,7 +72,7 @@ for i, time in enumerate(pattern.times):
   agents = [Agent(i, pattern.firstSave) for i in range(pattern.n)]
   count = 0
 
-  # fig = plt.figure()
+  fig = plt.figure()
   
   pattern.process(time, agents)
 
@@ -84,14 +84,15 @@ for i, time in enumerate(pattern.times):
 
   bins = np.ceil((max(agent_wealth) - min(agent_wealth)) / pattern.gainMoney)
 
-  lines, *_ = plt.hist(agent_wealth, bins = int(bins))
+  # lines, *_ = plt.hist(agent_wealth, bins = int(bins))
+  plt.hist(agent_wealth, bins = int(bins))
   plt.title(f'{pattern.graphTitle} (t = {time}, G = {G})')
 
-  ims.append([lines])
+  # ims.append([lines])
   plt.savefig(dir+f"/譲渡回数{time}.png")
 
 
-ani = animation.ArtistAnimation(fig, ims)
+# ani = animation.ArtistAnimation(fig, ims)
 # ani.save("anim.gif", writer="imagemagick")
 plt.show()
 

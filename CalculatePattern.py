@@ -6,10 +6,12 @@ class CalculatePattern:
     _RedistributionPerTime = 10
 
     def __init__(self, graphTitle, redistribution=False, firstSave=100, limit=5000000, n=1000, givingMoney=5, gainRate=1):
-        if redistribution:
-            graphTitle += ", 再分配あり"
-        else:
-            graphTitle += ", 再分配なし"
+        # if redistribution:
+        #     graphTitle += ", 再分配あり"
+        # else:
+        #     graphTitle += ", 再分配なし"
+        
+        self.path = graphTitle + "/再分配" + ("あり" if redistribution else "なし")
         
         self.graphTitle = graphTitle
         self.redistribution = redistribution
@@ -45,7 +47,7 @@ class CalculatePattern:
         if agent1.wealth >= self.givingMoney:
             agent2.wealth += self.gainMoney
             agent1.wealth -= self.givingMoney
-            taxation(givingMoney - gainMoney)
+            self.taxation(self.givingMoney - self.gainMoney)
 
     def gini(self, y):
         y.sort()
@@ -62,15 +64,15 @@ class CalculatePattern:
         for i in range(time):
             self.giveMoney(agents)
 
-            if i % _RedistributionPerTime == 0 and self.redistribution:
+            if i % self._RedistributionPerTime == 0 and self.redistribution:
                 self.redistribute(agents)
 
     def redistribute(self, agents):
-        subsidy = treasury / len(agents)
+        subsidy = self.treasury / len(agents)
         for agent in agents:
             agent.wealth += subsidy
 
-        treasury = 0
+        self.treasury = 0
 
     def taxation(self, money):
-        treasury += money
+        self.treasury += money

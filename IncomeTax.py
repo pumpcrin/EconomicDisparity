@@ -15,21 +15,23 @@ class IncomeTax(cp.CalculatePattern):
     _Bias_RateFormula = 58.859
     _MaxRateMinMoney_InReal = 4000
     _MaxRateMinMoney_InSimu = 350
-    taxationPerTime = self._RedistributionPerTime
 
-    def __init__(self, graphTitle="所得税あり（連続的）", redistribution=False limit=50000):
+    def __init__(self, graphTitle="所得税あり（連続的）", redistribution=False, limit=50000):
         super().__init__(graphTitle, redistribution=redistribution, limit=limit)
+        self._TaxationPerTime = super()._RedistributionPerTime
+
 
     
     def initialize(self):
         super().initialize()
         self.m = self._MaxRateMinMoney_InReal / self._MaxRateMinMoney_InSimu
+        
 
     def process(self, time, agents):
 
         for i in range(time):
             super().giveMoney(agents)
-            if i != 0 and i % self.taxationPerTime == 0:
+            if i != 0 and i % self._TaxationPerTime == 0:
                 self.subProcess(agents)
     
 
@@ -42,15 +44,16 @@ class IncomeTax(cp.CalculatePattern):
 
             # if percentage < 0:
             #     percentage = 0
-            taxRate = getTaxRate(agent)
+            taxRate = self.getTaxRate(agent)
 
-            tax = agent.wealth * taxRate/100
+            tax = agent.wealth * taxRate
             agent.wealth -= tax
-            taxation(tax)
+            self.taxation(tax)
 
+    # 小数点で表した税率を返す
     def getTaxRate(self, agent):
-        taxRate = self._Coef_RateFormula*np.log(agent.wealth*self.m) - self._Bias_RateFormula
-        taxRate /= 100
+        taxPercentage = self._Coef_RateFormula*np.log(agent.wealth*self.m) - self._Bias_RateFormula
+        taxRate = taxPercentage / 100
 
         if taxRate < 0:
             taxRate = 0

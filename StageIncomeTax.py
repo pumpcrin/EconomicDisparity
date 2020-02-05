@@ -12,16 +12,16 @@ import IncomeTax as income
 class StageIncomeTax(income.IncomeTax):
 
     # taxPairs = [(17.5903, 5), (26.6448, 10), (61.1354, 20), (78.4326, 23), (179.9601, 33), (321.8488, 40)]
-    taxationPerTime = 10
 
     def __init__(self, redistribution=False):
-        super().__init__(graphTitle="段階的所得税", redistribution=redistribution, limit=5000000)
+        super().__init__(graphTitle="段階的所得税", redistribution=redistribution, limit=500000)
+        self._TaxationPerTime = 10
 
     def initialize(self):
         super().initialize()
-        taxRates = [5, 10, 20, 23, 33, 40]
+        taxPercentages = [5, 10, 20, 23, 33, 40]
         # self.taxPairs = [(np.exp((taxRate + self._Bias_RateFormula)/self._Coef_RateFormula) / self.m, taxRate) for taxRate in taxRates]
-        self.taxPairs = [(np.exp((taxRate + self._Bias_RateFormula)/self._Coef_RateFormula), taxRate) for taxRate in taxRates]
+        self.taxPairs = [(np.exp((taxPercent + self._Bias_RateFormula)/self._Coef_RateFormula), taxPercent/100) for taxPercent in taxPercentages]
         print("initialize: StageIncomeTax")
         print(self.taxPairs)
 
@@ -48,5 +48,5 @@ class StageIncomeTax(income.IncomeTax):
             if agent.wealth < taxPair[0]:
                 break
             taxRate = taxPair[1]
-        
+
         return taxRate
