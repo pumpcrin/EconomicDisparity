@@ -5,16 +5,14 @@ class CalculatePattern:
 
     _RedistributionPerTime = 10
 
-    def __init__(self, graphTitle, redistribution=False, firstSave=100, limit=5000000, n=1000, givingMoney=5, gainRate=1):
+    def __init__(self, graphTitle, firstSave=100, limit=5000000, n=1000, givingMoney=5, gainRate=1):
         # if redistribution:
         #     graphTitle += ", 再分配あり"
         # else:
         #     graphTitle += ", 再分配なし"
         
-        self.path = graphTitle + "/再分配" + ("あり" if redistribution else "なし")
         
         self.graphTitle = graphTitle
-        self.redistribution = redistribution
         self.firstSave = firstSave
 
         self.firstSave = firstSave
@@ -24,7 +22,12 @@ class CalculatePattern:
         self.gainMoney = givingMoney * gainRate
         self.treasury = 0
 
-    def initialize(self):
+    def initialize(self, redistribution=False):
+        redisStr = "再分配" + ("あり" if redistribution else "なし")
+        self.path = self.graphTitle + "/" + redisStr
+        self.graphTitle += ", " + redisStr
+        self.redistribution = redistribution
+        
         limit = self.limit
 
         timeBases = [1, 2, 5]
@@ -64,10 +67,13 @@ class CalculatePattern:
         for i in range(time):
             self.giveMoney(agents)
 
-            if i % self._RedistributionPerTime == 0 and self.redistribution:
-                self.redistribute(agents)
+            # if i % self._RedistributionPerTime == 0 and self.redistribution:
+            #     self.redistribute(agents)
 
-    def redistribute(self, agents):
+    def redistribute(self, i, agents):
+        if i % self._RedistributionPerTime != 0 or (not self.redistribution):
+            return
+
         subsidy = self.treasury / len(agents)
         for agent in agents:
             agent.wealth += subsidy
@@ -76,3 +82,7 @@ class CalculatePattern:
 
     def taxation(self, money):
         self.treasury += money
+
+    def additionalWriteParams(self, status):
+        status += [(self._RedistributionPerTime, "再分配の間隔")]
+        return status

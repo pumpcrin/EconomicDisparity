@@ -45,7 +45,12 @@ for i, pattern in enumerate(patterns):
 patternNum = tl.SafetyIntegerInput("施行する政策を選択してください：")
 
 pattern = patterns[patternNum]
-pattern.initialize()
+
+redistribution = False
+if patternNum != 0:
+  redistribution = tl.SafetyIntegerInput("徴収した税を全体に再分配しますか？（1:はい, 0:いいえ）")
+
+pattern.initialize(redistribution)
 
 
 #フォルダ名
@@ -54,7 +59,14 @@ dir = f"{pattern.path}/{now}"
 os.makedirs(dir, exist_ok=True)
 
 #条件をテキストファイルに出力
-status = [(pattern.graphTitle, "政策"), (pattern.n, "人口"), (pattern.limit, "最大譲渡回数"), (pattern.firstSave, "初期所得"), (pattern.givingMoney, "1回の譲渡で失う所得"), (pattern.gainMoney, "1回の譲渡で得る所得")]
+status = [(pattern.graphTitle, "政策"), \
+          (pattern.n, "人口"), \
+          (pattern.limit, "最大譲渡回数"), \
+          (pattern.firstSave, "初期所得"), \
+          (pattern.givingMoney, "1回の譲渡で失う所得"), \
+          (pattern.gainMoney, "1回の譲渡で得る所得")]
+
+status = pattern.additionalWriteParams(status)
 statusText = [f"{tuple[1]}\t= {tuple[0]}" for tuple in status]
 with open(dir+"/status.txt", mode="w") as f:
   f.writelines("\n".join(statusText))

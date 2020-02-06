@@ -13,12 +13,12 @@ class StageIncomeTax(income.IncomeTax):
 
     # taxPairs = [(17.5903, 5), (26.6448, 10), (61.1354, 20), (78.4326, 23), (179.9601, 33), (321.8488, 40)]
 
-    def __init__(self, redistribution=False):
-        super().__init__(graphTitle="段階的所得税", redistribution=redistribution, limit=500000)
+    def __init__(self):
+        super().__init__(graphTitle="段階的所得税", limit=500000)
         self._TaxationPerTime = 10
 
-    def initialize(self):
-        super().initialize()
+    def initialize(self, redistribution=False):
+        super().initialize(redistribution = redistribution)
         taxPercentages = [5, 10, 20, 23, 33, 40]
         # self.taxPairs = [(np.exp((taxRate + self._Bias_RateFormula)/self._Coef_RateFormula) / self.m, taxRate) for taxRate in taxRates]
         self.taxPairs = [(np.exp((taxPercent + self._Bias_RateFormula)/self._Coef_RateFormula), taxPercent/100) for taxPercent in taxPercentages]
@@ -50,3 +50,8 @@ class StageIncomeTax(income.IncomeTax):
             taxRate = taxPair[1]
 
         return taxRate
+
+    def additionalWriteParams(self, status):
+        status = super().additionalWriteParams(status)
+        status += [(f"税率{taxPair[1]}%", f"所得{taxPair[0]}以上") for taxPair in self.taxPairs]
+        return status

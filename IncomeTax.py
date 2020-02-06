@@ -16,14 +16,14 @@ class IncomeTax(cp.CalculatePattern):
     _MaxRateMinMoney_InReal = 4000
     _MaxRateMinMoney_InSimu = 350
 
-    def __init__(self, graphTitle="所得税あり（連続的）", redistribution=False, limit=50000):
-        super().__init__(graphTitle, redistribution=redistribution, limit=limit)
+    def __init__(self, graphTitle="所得税あり（連続的）", limit=50000):
+        super().__init__(graphTitle, limit=limit)
         self._TaxationPerTime = super()._RedistributionPerTime
 
 
     
-    def initialize(self):
-        super().initialize()
+    def initialize(self, redistribution=False):
+        super().initialize(redistribution=redistribution)
         self.m = self._MaxRateMinMoney_InReal / self._MaxRateMinMoney_InSimu
         
 
@@ -33,7 +33,8 @@ class IncomeTax(cp.CalculatePattern):
             super().giveMoney(agents)
             if i != 0 and i % self._TaxationPerTime == 0:
                 self.subProcess(agents)
-    
+
+            self.redistribute(i, agents)    
 
     def subProcess(self, agents):
         for agent in agents:
@@ -60,3 +61,7 @@ class IncomeTax(cp.CalculatePattern):
 
         return taxRate
 
+    def additionalWriteParams(self, status):
+        status = super().additionalWriteParams(status)
+        status += [(self._TaxationPerTime, "課税の間隔"), (f"{self._MaxRateMinMoney_InReal}/{self._MaxRateMinMoney_InSimu}={self.m}", "横軸の縮小倍率")]
+        return status
