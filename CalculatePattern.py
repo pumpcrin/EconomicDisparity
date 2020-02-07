@@ -63,9 +63,11 @@ class CalculatePattern:
 
         return ((2*nume)/deno - (n+1)/(n))*(n/(n-1))
 
-    def process(self, time, agents):
-        for i in range(time):
+    def process(self, currentTime, time, agents):
+        while currentTime <= time:
+        # for i in range(time):
             self.giveMoney(agents)
+            currentTime += 1
 
             # if i % self._RedistributionPerTime == 0 and self.redistribution:
             #     self.redistribute(agents)

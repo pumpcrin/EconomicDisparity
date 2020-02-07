@@ -12,9 +12,11 @@ class ConsumptionTax(cp.CalculatePattern):
   def __init__(self):
       super().__init__("消費税あり", gainRate = 0.9)
 
-  def process(self, time, agents):
-    for i in range(time):
+  def process(self, currentTime, time, agents):
+    while currentTime <= time:
+    # for i in range(time):
       self.giveMoney(agents)
 
-      self.redistribute(i, agents)
+      self.redistribute(currentTime, agents)
+      currentTime += 1
       

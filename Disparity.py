@@ -58,11 +58,14 @@ now = datetime.datetime.now().strftime('%y-%m-%d_%H-%M-%S')
 dir = f"{pattern.path}/{now}"
 os.makedirs(dir, exist_ok=True)
 
+bins = 400
+
 #条件をテキストファイルに出力
 status = [(pattern.graphTitle, "政策"), \
           (pattern.n, "人口"), \
           (pattern.limit, "最大譲渡回数"), \
           (pattern.firstSave, "初期所得"), \
+          (bins, "ヒストグラムの棒の本数"), \
           (pattern.givingMoney, "1回の譲渡で失う所得"), \
           (pattern.gainMoney, "1回の譲渡で得る所得")]
 
@@ -75,37 +78,29 @@ ginis = []
 ims = []
 
 # fig = plt.figure()
+agents = [Agent(i, pattern.firstSave) for i in range(pattern.n)]
+currentTime = 0
 
 # 各譲渡回数でグラフ描画
 for i, time in enumerate(pattern.times):
 
-  print(f"【{i+1}つ目のグラフ】")
+    print(f"【{i+1}つ目のグラフ】")
 
-  agents = [Agent(i, pattern.firstSave) for i in range(pattern.n)]
-  count = 0
+    fig = plt.figure()
+    pattern.process(currentTime, time, agents)
+    currentTime = time
 
-  fig = plt.figure()
-  
-  pattern.process(time, agents)
+    agent_wealth = [a.wealth for a in agents]
+    G = pattern.gini(agent_wealth)
+    ginis.append(G)
 
-  agent_wealth = [a.wealth for a in agents]
-  G = pattern.gini(agent_wealth)
-  ginis.append(G)
+    print("G = "+str(G) + ", time = "+str(time))
 
-  print("G = "+str(G) + ", time = "+str(time))
+    plt.hist(agent_wealth, bins = int(bins))
+    plt.title(f'{pattern.graphTitle} (t = {time}, G = {G})')
 
-  bins = np.ceil((max(agent_wealth) - min(agent_wealth)) / pattern.gainMoney)
+    plt.savefig(dir+f"/譲渡回数{time}.png")
 
-  # lines, *_ = plt.hist(agent_wealth, bins = int(bins))
-  plt.hist(agent_wealth, bins = int(bins))
-  plt.title(f'{pattern.graphTitle} (t = {time}, G = {G})')
-
-  # ims.append([lines])
-  plt.savefig(dir+f"/譲渡回数{time}.png")
-
-
-# ani = animation.ArtistAnimation(fig, ims)
-# ani.save("anim.gif", writer="imagemagick")
 plt.show()
 
 
@@ -123,3 +118,49 @@ if(notSaveFlag):
 # gifFlag = tl.tl.SafetyIntegerInput('結果をgif化しますか？(はい: 0, いいえ: 1以上)', 0)
 # if(not gifFlag):
   # tl.saveGif("./"+pattern.graphTitle, dir, f"{now}.gif")
+# for i, time in enumerate(pattern.times):
+
+#   print(f"【{i+1}つ目のグラフ】")
+
+#   agents = [Agent(i, pattern.firstSave) for i in range(pattern.n)]
+#   count = 0
+
+#   fig = plt.figure()
+  
+#   pattern.process(time, agents)
+
+#   agent_wealth = [a.wealth for a in agents]
+#   G = pattern.gini(agent_wealth)
+#   ginis.append(G)
+
+#   print("G = "+str(G) + ", time = "+str(time))
+
+#   # bins = np.ceil((max(agent_wealth) - min(agent_wealth)) / pattern.gainMoney)
+
+#   # lines, *_ = plt.hist(agent_wealth, bins = int(bins))
+#   plt.hist(agent_wealth, bins = int(bins))
+#   plt.title(f'{pattern.graphTitle} (t = {time}, G = {G})')
+
+#   # ims.append([lines])
+#   plt.savefig(dir+f"/譲渡回数{time}.png")
+
+
+# # ani = animation.ArtistAnimation(fig, ims)
+# # ani.save("anim.gif", writer="imagemagick")
+# plt.show()
+
+
+# plt.clf()
+# fig = plt.figure()
+# plt.plot(pattern.times, ginis, lineStyle="dashed", marker="o")
+# plt.title("ジニ係数の推移")
+# plt.savefig(dir+f"/ジニ係数推移.png")
+# plt.show()
+
+# notSaveFlag = tl.SafetyIntegerInput('結果を出力しますか？(はい: 0, いいえ: 1以上)', 0)
+# if(notSaveFlag):
+#   shutil.rmtree(dir)
+
+# # gifFlag = tl.tl.SafetyIntegerInput('結果をgif化しますか？(はい: 0, いいえ: 1以上)', 0)
+# # if(not gifFlag):
+#   # tl.saveGif("./"+pattern.graphTitle, dir, f"{now}.gif")

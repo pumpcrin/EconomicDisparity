@@ -14,9 +14,9 @@ class IncomeTax(cp.CalculatePattern):
     _Coef_RateFormula = 12.041
     _Bias_RateFormula = 58.859
     _MaxRateMinMoney_InReal = 4000
-    _MaxRateMinMoney_InSimu = 350
+    _MaxRateMinMoney_InSimu = 700
 
-    def __init__(self, graphTitle="所得税あり（連続的）", limit=50000):
+    def __init__(self, graphTitle="所得税あり（連続的）", limit=200000):
         super().__init__(graphTitle, limit=limit)
         self._TaxationPerTime = super()._RedistributionPerTime
 
@@ -27,14 +27,15 @@ class IncomeTax(cp.CalculatePattern):
         self.m = self._MaxRateMinMoney_InReal / self._MaxRateMinMoney_InSimu
         
 
-    def process(self, time, agents):
-
-        for i in range(time):
+    def process(self, currentTime, time, agents):
+        while currentTime <= time:
+        # for i in range(time):
             super().giveMoney(agents)
-            if i != 0 and i % self._TaxationPerTime == 0:
+            if currentTime != 0 and currentTime % self._TaxationPerTime == 0:
                 self.subProcess(agents)
 
-            self.redistribute(i, agents)    
+            self.redistribute(currentTime, agents)
+            currentTime += 1
 
     def subProcess(self, agents):
         for agent in agents:
