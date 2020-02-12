@@ -15,13 +15,12 @@ class StageIncomeTax(income.IncomeTax):
 
     def __init__(self):
         super().__init__(graphTitle="段階的所得税", limit=500000)
-        self._TaxationPerTime = 10
 
     def initialize(self, redistribution=False):
         super().initialize(redistribution = redistribution)
         taxPercentages = [5, 10, 20, 23, 33, 40]
         # self.taxPairs = [(np.exp((taxRate + self._Bias_RateFormula)/self._Coef_RateFormula) / self.m, taxRate) for taxRate in taxRates]
-        self.taxPairs = [(np.exp((taxPercent + self._Bias_RateFormula)/self._Coef_RateFormula), taxPercent/100) for taxPercent in taxPercentages]
+        self.taxPairs = [(np.exp((taxPercent + self._Bias_RateFormula)/self._Coef_RateFormula) / self.m, taxPercent/100) for taxPercent in taxPercentages]
         print("initialize: StageIncomeTax")
         print(self.taxPairs)
 

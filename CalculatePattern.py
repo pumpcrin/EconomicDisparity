@@ -3,7 +3,7 @@ import random
 # 政策ごとに変わりそうなところだけクラス化、このまま使うと政策なしになる
 class CalculatePattern:
 
-    _RedistributionPerTime = 10
+    _RedistributionPerTime = 1000
 
     def __init__(self, graphTitle, firstSave=100, limit=5000000, n=1000, givingMoney=5, gainRate=1):
         # if redistribution:
