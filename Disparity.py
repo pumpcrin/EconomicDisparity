@@ -13,7 +13,6 @@ from matplotlib import rcParams
 from PIL import Image
 import glob
 
-
 rcParams['font.family'] = 'Meiryo'
 
 import Tools as tl

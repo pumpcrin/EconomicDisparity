@@ -10,7 +10,7 @@ import CalculatePattern as cp
 class ConsumptionTax(cp.CalculatePattern):
 
   def __init__(self):
-      super().__init__("消費税あり", gainRate = 0.9)
+      super().__init__("消費税あり", gainRate = 0.9, limit=500000)
 
   def process(self, currentTime, time, agents):
     while currentTime <= time:

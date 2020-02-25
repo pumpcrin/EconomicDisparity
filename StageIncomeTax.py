@@ -12,6 +12,7 @@ import IncomeTax as income
 class StageIncomeTax(income.IncomeTax):
 
     # taxPairs = [(17.5903, 5), (26.6448, 10), (61.1354, 20), (78.4326, 23), (179.9601, 33), (321.8488, 40)]
+    _MaxTaxPercent = 45
 
     def __init__(self):
         super().__init__(graphTitle="段階的所得税", limit=500000)
@@ -44,13 +45,17 @@ class StageIncomeTax(income.IncomeTax):
 
         taxRate = 0
         for taxPair in self.taxPairs:
-            if agent.wealth < taxPair[0]:
-                break
             taxRate = taxPair[1]
+            if agent.wealth <= taxPair[0]:
+                break
+            taxRate = self._MaxTaxPercent / 100
 
+        if taxRate == self._MaxTaxPercent / 100:
+            print("maxTaxAgentWealth: ", agent.wealth)
         return taxRate
 
     def additionalWriteParams(self, status):
         status = super().additionalWriteParams(status)
-        status += [(f"税率{taxPair[1]}%", f"所得{taxPair[0]}以上") for taxPair in self.taxPairs]
+        status += [(f"税率{taxPair[1]}%", f"所得{taxPair[0]}以下") for taxPair in self.taxPairs]
+        status += [(f"税率{self._MaxTaxPercent / 100}%", f"所得{self.taxPairs[-1][0]}超")]
         return status

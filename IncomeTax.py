@@ -14,9 +14,9 @@ class IncomeTax(cp.CalculatePattern):
     _Coef_RateFormula = 12.041
     _Bias_RateFormula = 58.859
     _MaxRateMinMoney_InReal = 4000
-    _MaxRateMinMoney_InSimu = 350
+    _MaxRateMinMoney_InSimu = 700
 
-    def __init__(self, graphTitle="所得税あり（連続的）", limit=200000):
+    def __init__(self, graphTitle="所得税あり（連続的）", limit=500000):
         super().__init__(graphTitle, limit=limit)
         self._TaxationPerTime = super()._RedistributionPerTime
 

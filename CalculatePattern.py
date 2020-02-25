@@ -5,7 +5,7 @@ class CalculatePattern:
 
     _RedistributionPerTime = 1000
 
-    def __init__(self, graphTitle, firstSave=100, limit=5000000, n=1000, givingMoney=5, gainRate=1):
+    def __init__(self, graphTitle, firstSave=100, limit=500000, n=1000, givingMoney=5, gainRate=1):
         # if redistribution:
         #     graphTitle += ", 再分配あり"
         # else:
